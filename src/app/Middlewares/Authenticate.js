@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken');
 const config = require('../../config/auth');
 const { promisify } = require('util');
 
-module.exports = async (req, res, next) {
-  const auth = res.headers.authorization;
+module.exports = async (req, res, next) => {
+  const auth = req.headers.authorization;
 
   if (!auth) {
     return res.status(401).json({
@@ -16,23 +16,23 @@ module.exports = async (req, res, next) {
   const [, token] = auth.split(' ');
 
   try {
-    const decode = await promisify(jwt.verify)(token, config.secret);
+    const decoded = await promisify(jwt.verify)(token, config.secret);
 
-    if (!decode) {
+    if (!decoded) {
       return res.status(401).json({
         error: true,
         code: 130,
-        message: "Invalid token."
+        message: "Expired token."
       })
     } else {
-      req.user_id = decode.id;
+      req.user_id = decoded.id;
       next();
     }
   } catch {
     return res.status(401).json({
       error: true,
       code: 130,
-      message: "Expired token."
+      message: "Invalid token."
     })
   }
 }
