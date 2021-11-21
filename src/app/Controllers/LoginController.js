@@ -11,7 +11,7 @@ class LoginController {
     if (!userExists) {
       return res.status(400).json({
         error: true,
-        message: "User already exists."
+        message: "User not exists."
       })
     }
 
